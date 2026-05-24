@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#8b2fc9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="CONNECT - Events, Stores, Services, Affiliate & More">
+    <title>CONNECT - Business Ecosystem</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ==================== SPLASH SCREEN ==================== -->
+<div id="splashScreen" class="splash-screen">
+    <div class="splash-inner">
+        <div class="splash-logo-circle"><span>C</span></div>
+        <h1>CONNECT</h1>
+        <p>Events. Stores. Services. Affiliate.</p>
+        <div class="splash-loading-bar"><div class="splash-loading-fill"></div></div>
+    </div>
+</div>
+
+<!-- ==================== ONBOARDING SCREEN ==================== -->
+<div id="onboardingScreen" class="screen hidden">
+    <button class="onboarding-skip-button" id="onboardingSkip">Skip</button>
+    <div class="onboarding-slides-wrapper" id="onboardingSlides">
+        <div class="onboarding-slide active">
+            <div class="onboarding-icon">🎉</div>
+            <h2>Discover Amazing Events</h2>
+            <p>Find concerts, parties, conferences and more happening near you</p>
+        </div>
+        <div class="onboarding-slide">
+            <div class="onboarding-icon">🏪</div>
+            <h2>Create Your Online Store</h2>
+            <p>Set up your store, add products, and start selling immediately</p>
+        </div>
+        <div class="onboarding-slide">
+            <div class="onboarding-icon">💎</div>
+            <h2>Earn as an Affiliate</h2>
+            <p>Promote products, earn commissions on every sale</p>
+        </div>
+    </div>
+    <div class="onboarding-dots-row" id="onboardingDots">
+        <span class="onboarding-dot active" data-index="0"></span>
+        <span class="onboarding-dot" data-index="1"></span>
+        <span class="onboarding-dot" data-index="2"></span>
+    </div>
+    <button class="btn-primary btn-full" id="onboardingNext">Next</button>
+</div>
+
+<!-- ==================== AUTH SCREEN ==================== -->
+<div id="authScreen" class="screen hidden">
+    <div class="auth-container">
+        <div class="auth-logo-section">
+            <div class="auth-logo-icon"><span>C</span></div>
+            <h1>CONNECT</h1>
+            <p>Your all-in-one business ecosystem</p>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginFormWrapper" class="auth-card">
+            <h3>Welcome Back</h3>
+
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="text" id="loginIdentifier" class="input-field" placeholder="Email or Username" autocomplete="username">
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="loginPassword" class="input-field" placeholder="Password" autocomplete="current-password">
+                <button type="button" class="input-toggle-btn" id="loginPwToggle">👁</button>
+            </div>
+
+            <div class="form-options-row">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="rememberMe">
+                    <span class="checkbox-mark"></span><span>Remember me</span>
+                </label>
+                <span class="form-link" id="forgotPasswordLink">Forgot Password?</span>
+            </div>
+
+            <button class="btn-primary btn-full" id="loginSubmitButton">Sign In</button>
+
+            <div class="divider-line"><span>or continue with</span></div>
+
+            <button class="btn-google btn-full" id="googleLoginButton">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+            </button>
+
+            <button class="btn-apple btn-full" id="appleLoginButton">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                </svg>
+                Sign in with Apple
+            </button>
+
+            <p class="auth-switch-text">Don't have an account? <span class="form-link-purple" id="showRegisterLink">Sign Up</span></p>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerFormWrapper" class="auth-card hidden">
+            <h3>Create Account</h3>
+
+            <div class="input-row-dual">
+                <div class="input-group half">
+                    <input type="text" id="regFullName" class="input-field" placeholder="Full Name" required>
+                </div>
+                <div class="input-group half">
+                    <input type="text" id="regUsername" class="input-field" placeholder="Username" required autocomplete="off">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="regEmail" class="input-field" placeholder="Email address" required autocomplete="email">
+            </div>
+
+            <div class="input-group search-group">
+                <i class="fas fa-globe input-icon"></i>
+                <input type="text" id="regCountrySearch" class="input-field" placeholder="Search country..." autocomplete="off">
+                <input type="hidden" id="regCountryCode">
+                <div class="search-dropdown" id="countryDropdown"></div>
+            </div>
+
+            <div class="input-group search-group">
+                <i class="fas fa-map-marker-alt input-icon"></i>
+                <input type="text" id="regStateSearch" class="input-field" placeholder="Search state..." disabled autocomplete="off">
+                <input type="hidden" id="regStateValue">
+                <div class="search-dropdown" id="stateDropdown"></div>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-gift input-icon"></i>
+                <input type="text" id="regReferralCode" class="input-field" placeholder="Referral Code (Optional)">
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-user-tag input-icon"></i>
+                <select id="regAccountType" class="input-field select-field">
+                    <option value="">Select Account Type</option>
+                    <option value="customer">Customer</option>
+                    <option value="business_owner">Business Owner</option>
+                    <option value="service_provider">Service Provider</option>
+                    <option value="freelancer">Freelancer</option>
+                </select>
+            </div>
+
+            <div class="input-group hidden" id="serviceCategoryWrapper">
+                <i class="fas fa-tools input-icon"></i>
+                <select id="regServiceCategory" class="input-field select-field">
+                    <option value="">Select Service Category</option>
+                </select>
+            </div>
+
+            <div class="input-row-dual">
+                <div class="input-group half">
+                    <input type="password" id="regPassword" class="input-field" placeholder="Password" required autocomplete="new-password">
+                </div>
+                <div class="input-group half">
+                    <input type="password" id="regConfirmPassword" class="input-field" placeholder="Confirm Password" required autocomplete="new-password">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-camera input-icon"></i>
+                <label class="image-upload-label">
+                    <input type="file" id="regProfileImage" accept="image/*" hidden>
+                    <div class="image-upload-box" id="profileImageUploadBox">
+                        <div class="image-upload-placeholder" id="profileImagePlaceholder">
+                            <span class="upload-icon-large">📷</span>
+                            <span class="upload-text-small">Tap to upload profile photo</span>
+                        </div>
+                        <img id="profileImagePreview" src="#" alt="Preview" class="image-preview-img hidden">
+                    </div>
+                </label>
+            </div>
+
+            <label class="checkbox-label terms-check">
+                <input type="checkbox" id="regTermsAgreed" required>
+                <span class="checkbox-mark"></span>
+                <span>I agree to the <a href="#" class="form-link-purple">Terms</a> and <a href="#" class="form-link-purple">Privacy Policy</a></span>
+            </label>
+
+            <button class="btn-primary btn-full" id="registerSubmitButton">Create Account</button>
+
+            <div class="divider-line"><span>or continue with</span></div>
+
+            <button class="btn-google btn-full" id="googleRegisterButton">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign up with Google
+            </button>
+
+            <button class="btn-apple btn-full" id="appleRegisterButton">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                </svg>
+                Sign up with Apple
+            </button>
+
+            <p class="auth-switch-text">Already have an account? <span class="form-link-purple" id="showLoginLink">Sign In</span></p>
+        </div>
+
+        <!-- FORGOT PASSWORD -->
+        <div id="forgotPasswordWrapper" class="auth-card hidden">
+            <h3>Reset Password</h3>
+            <p class="form-muted-text">Enter your email address and we'll send you a reset link</p>
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="resetPasswordEmail" class="input-field" placeholder="Email address" required>
+            </div>
+            <button class="btn-primary btn-full" id="resetPasswordButton">Send Reset Link</button>
+            <p class="auth-switch-text"><span class="form-link-purple" id="backToLoginLink">← Back to Login</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MAIN APP ==================== -->
+<div id="mainApp" class="screen hidden">
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="app-header-left" id="appHeaderLeft" onclick="navigateTo('home')">
+            <div class="app-header-logo-box"><span>C</span></div>
+            <span class="app-header-brand-name">CONNECT</span>
+        </div>
+        <div class="app-header-right">
+            <button class="app-header-icon-button" id="headerNotificationBtn">
+                <i class="fas fa-bell"></i>
+                <span class="app-header-badge hidden" id="notificationBadge">0</span>
+            </button>
+            <button class="app-header-icon-button" id="headerCartBtn">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="app-header-badge hidden" id="cartBadge">0</span>
+            </button>
+            <img id="headerAvatarImg" class="app-header-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%238b2fc9'/%3E%3Ctext x='16' y='21' text-anchor='middle' fill='white' font-size='14'%3EU%3C/text%3E%3C/svg%3E" alt="Profile" onclick="navigateTo('profile')">
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="app-main-content" id="appMainContent"></main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-navigation">
+        <button class="bottom-nav-button active" data-page="home" onclick="navigateTo('home')">
+            <i class="fas fa-home"></i><span>Home</span>
+        </button>
+        <button class="bottom-nav-button" data-page="events" onclick="navigateTo('events')">
+            <i class="fas fa-ticket-alt"></i><span>Events</span>
+        </button>
+        <button class="bottom-nav-button" data-page="services" onclick="navigateTo('services')">
+            <i class="fas fa-tools"></i><span>Services</span>
+        </button>
+        <button class="bottom-nav-button" data-page="stores" onclick="navigateTo('stores')">
+            <i class="fas fa-store"></i><span>Stores</span>
+        </button>
+        <button class="bottom-nav-button" data-page="affiliate" onclick="navigateTo('affiliate')">
+            <i class="fas fa-link"></i><span>Affiliate</span>
+        </button>
+    </nav>
+</div>
+
+<!-- ==================== NOTIFICATION PANEL ==================== -->
+<div id="notificationPanel" class="slide-panel hidden">
+    <div class="slide-panel-header">
+        <h3>Notifications</h3>
+        <button class="slide-panel-close" id="closeNotificationPanel">✕</button>
+    </div>
+    <div class="slide-panel-body" id="notificationList"></div>
+</div>
+
+<!-- ==================== MODAL SYSTEM ==================== -->
+<div id="modalOverlay" class="modal-overlay hidden" onclick="closeModal()"></div>
+<div id="modalContainer" class="modal-container hidden">
+    <div id="modalContent" class="modal-card"></div>
+</div>
+
+<!-- ==================== TOAST CONTAINER ==================== -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- ==================== LOADING OVERLAY ==================== -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-spinner-box">
+        <div class="loading-spinner-circle"></div>
+        <p id="loadingText">Loading...</p>
+    </div>
+</div>
+
+<!-- ==================== QR + BARCODE SCANNER ==================== -->
+<div id="qrScannerModal" class="qr-scanner-fullscreen hidden">
+    <div class="qr-scanner-header">
+        <button onclick="closeQRScanner()">✕</button>
+        <span>Scan Ticket</span>
+        <div></div>
+    </div>
+    <div id="qrReader" class="qr-reader-area"></div>
+    <div class="qr-scanner-footer"><p>Point camera at QR code or barcode</p></div>
+</div>
+
+<!-- ==================== AD OVERLAY ==================== -->
+<div id="adOverlay" class="modal-overlay hidden">
+    <div class="ad-overlay-content">
+        <button class="ad-overlay-close" onclick="document.getElementById('adOverlay').classList.add('hidden')">✕</button>
+        <div id="adOverlayContent"></div>
+    </div>
+</div>
+
+<!-- ==================== CUSTOMER SERVICE FOOTER ==================== -->
+<div class="customer-service-bar" style="text-align:center;padding:8px;background:var(--gray-100);font-size:0.65rem;color:var(--gray-500);position:fixed;bottom:var(--nav-height);left:0;right:0;z-index:99;">
+    Need help? Contact us: <a href="mailto:serviconnect9@gmail.com" style="color:var(--purple);font-weight:600;">serviconnect9@gmail.com</a>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
